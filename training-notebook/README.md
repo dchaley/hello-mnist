@@ -12,6 +12,7 @@ Install Jupyter https://jupyter.org/install
 pip install tensorflow
 pip install jupyterlab
 pip install notebook
+pip install pillow
 ```
 
 
