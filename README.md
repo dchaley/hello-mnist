@@ -81,16 +81,22 @@ cd prediction-function
 ./deploy.sh
 ```
 
-To call the function:
+To call the function, send it a json object like this:
 
 ```
-gcloud functions call handler --region $CLOUD_LOCATION --data "{\"image_b64\": \"base64string\"}" 
+{
+    "b64_images": [
+        "base64string",
+        "another_b64",
+        "etc64"
+    ]
+}
 ```
 
-For example, load up a png file this way:
+For example, using gcloud and the shell:
 
 ```
-gcloud functions call handler --region $CLOUD_LOCATION --data "{\"image_b64\": \"`cat ../training-notebook/mnist-test-img-0.png| base64 -w 0`\"}" 
+gcloud functions call handler --region $CLOUD_LOCATION --data "{\"b64_images\": [\"`cat sample-images/sample-digit7-example3.png| base64 -w 0`\"]}"
 ```
 
 See also [prediction README](prediction-function/README.md) for local development.
