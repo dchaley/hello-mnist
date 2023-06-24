@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import tensorflow as tf
 print("TensorFlow version:", tf.__version__)
 
@@ -24,4 +25,4 @@ model.compile(optimizer='adam',
 
 model.fit(x_train, y_train, epochs=5)
 
-model.save('mnist_model')
+model.save(f"{os.environ['AIP_MODEL_DIR']}")
