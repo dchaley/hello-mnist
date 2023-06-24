@@ -1,0 +1,6 @@
+# Function dependencies, for example:
+# package>=version
+
+Pillow==9.5.0
+numpy==1.23.5
+google-cloud-aiplatform==1.26.1

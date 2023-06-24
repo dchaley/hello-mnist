@@ -70,6 +70,28 @@ Prediction(predictions=[[-7.2741375, -8.51450443, -1.42691994, 0.146827221, -14.
 
 ### Deploy a cloud function to identify uploaded images
 
-TODO.
+Our cloud function takes a list of base64 encoded image files, and runs them through the model.
 
-Follow [this guide](https://cloud.google.com/blog/products/ai-machine-learning/how-to-serve-deep-learning-models-using-tensorflow-2-0-with-cloud-functions) but use Vertex AI model (vs loading from storage ourselves).
+To deploy the function, make sure your .envrc is loaded as above.
+
+Deploy the function:
+
+```
+cd prediction-function
+./deploy.sh
+```
+
+To call the function:
+
+```
+gcloud functions call handler --region $CLOUD_LOCATION --data "{\"image_b64\": \"base64string\"}" 
+```
+
+For example, load up a png file this way:
+
+```
+gcloud functions call handler --region $CLOUD_LOCATION --data "{\"image_b64\": \"`cat ../training-notebook/mnist-test-img-0.png| base64 -w 0`\"}" 
+```
+
+See also [prediction README](prediction-function/README.md) for local development.
+
