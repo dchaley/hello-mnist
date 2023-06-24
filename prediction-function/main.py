@@ -20,8 +20,8 @@ def endpoint_predict(project: str, location: str, instances: list, endpoint: str
 
 def image_to_pixels(base64_string):
     decoded_bytes = base64.b64decode(base64_string)
-    img = Image.open(BytesIO(decoded_bytes))
-    # TODO: grayscale + resize to 28x28
+    img = Image.open(BytesIO(decoded_bytes)).convert('L')
+    # TODO: resize to 28x28
     normalized_image = (numpy.array(img) / 255)
     return normalized_image.tolist()
 
