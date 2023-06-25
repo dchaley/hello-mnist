@@ -1,38 +1,36 @@
 #!/usr/bin/env python
 
+import base64
+import io
+import json
 import os
+from pathlib import Path
 import sys
 
-from google.cloud import aiplatform
-import numpy
-from PIL import Image
+from google.cloud import functions_v1
 
 if len(sys.argv) < 2:
-    sys.exit("Usage: get-prediction.py <png file>")
+    sys.exit("Usage: get-prediction.py <png file 1> [png file 2] ...")
 
 project = os.environ['CLOUD_PROJECT']
-endpoint_id = os.environ['CLOUD_ENDPOINT_ID']
 location = os.environ['CLOUD_LOCATION']
+function_name = 'handler'
 
-def endpoint_predict_sample(
-    project: str, location: str, instances: list, endpoint: str
-):
-    aiplatform.init(project=project, location=location)
+client = functions_v1.CloudFunctionsServiceClient()
+full_function_name = client.cloud_function_path(project, location, function_name)
 
-    endpoint = aiplatform.Endpoint(endpoint)
+# For each file in the args:
+# - read the bytes
+# - encode into b64 byte string,
+# - decode into a regular string for JSON
+data = {
+    'b64_images': [
+        base64.b64encode(Path(x).read_bytes()).decode('UTF-8')
+        for x in sys.argv[1:]
+    ]
+}
 
-    prediction = endpoint.predict(instances=[instances])
-    return prediction
+response = client.call_function(name=full_function_name, data=json.dumps(data))
 
-def image_to_pixels(filename: str):
-    im = Image.open(sys.argv[1])
-    normalized_image = (numpy.array(im) / 255)
-    return normalized_image.tolist()
-
-input_data = image_to_pixels(sys.argv[1])
-
-prediction = endpoint_predict_sample(project, location, input_data, str(endpoint_id))
-
-print(prediction)
-print(numpy.argmax(prediction.predictions))
+print(response.result)
 

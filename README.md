@@ -2,11 +2,49 @@
 
 Objective: train, deploy, and get online predictions from a TensorFlow model to recognize handwritten digits.
 
+The deployed project provides a Cloud Function that accepts base64-encoded images of digits and returns the predicted digits.
+
 See also: [MNIST Database](https://en.wikipedia.org/wiki/MNIST_database)
 
 ## Tasks
 
+### TLDR
+
+Install dependencies & create cloud project + bucket in a region (important! example: us-west1).
+
+Export appropriate environment variables: `CLOUD_BUCKET_NAME`, `CLOUD_PROJECT`, `CLOUD_LOCATION`.
+
+```
+# 1. Upload the custom training code
+cd training-code
+./upload-training-code.sh
+
+# 2. Create the Vertex AI training pipeline using Cloud Console.
+# This will take a few minutes. When complete, deploy the Vertex
+# AI Model to an Endpoint and note the endpoint id. Export the
+# endpoint ID to the environment as CLOUD_ENDPOINT_ID
+
+# 3. Upload the prediction function
+cd ../prediction-function
+./deploy.sh
+
+# 4. Get predictions
+cd ..
+./get-predictions.py sample-images/sample-digit*
+```
+
 ### Setup
+
+You need a python 3 environment with at least these dependencies:
+
+```
+pip install google-cloud-functions
+pip install functions-framework
+pip install tensorflow
+pip install google-cloud-aiplatform
+pip install pillow
+pip install jupyterlab
+```
 
 Create a Cloud project, then a Storage bucket. Make sure the bucket is in a specific region (eg `us-west1`).
 
@@ -100,4 +138,34 @@ gcloud functions call handler --region $CLOUD_LOCATION --data "{\"b64_images\": 
 ```
 
 See also [prediction README](prediction-function/README.md) for local development.
+
+### Get predictions from the command line
+
+Helper to call the cloud function, passing in images from the command line.
+
+```
+./get-predictions.py <filenames>
+```
+
+for example, to generate a prediction for every sample image:
+
+```
+./get-prediction.py sample-images/sample-digit*
+```
+
+Output:
+
+```
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 9, 9, 4, 8, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
+```
+
+To test correctness, try something like this:
+
+```
+correct = sum(map(lambda x: [x] * 15, range(10)), [])
+result = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 9, 9, 4, 8, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 8, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9]
+
+percent_correct = [result[x] == correct[x] for x in range(len(correct))].count(True) / len(correct)
+print(percent_correct)
+```
 
