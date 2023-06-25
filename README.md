@@ -15,6 +15,8 @@ Install dependencies & create cloud project + bucket in a region (important! exa
 Export appropriate environment variables: `CLOUD_BUCKET_NAME`, `CLOUD_PROJECT`, `CLOUD_LOCATION`.
 
 ```
+gcloud config set project $CLOUD_PROJECT
+
 # 1. Upload the custom training code
 cd training-code
 ./upload-training-code.sh
