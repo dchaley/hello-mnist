@@ -6,6 +6,8 @@ The deployed project provides a Cloud Function that accepts base64-encoded image
 
 See also: [MNIST Database](https://en.wikipedia.org/wiki/MNIST_database)
 
+![Google Cloud Architecture](architecture.png)
+
 ## Tasks
 
 ### TLDR
