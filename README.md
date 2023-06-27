@@ -1,4 +1,4 @@
-# Hello, MNIST
+# Hello, MNIST: Serverless machine learning training & prediction
 
 Objective: train, deploy, and get online predictions from a TensorFlow model to recognize handwritten digits.
 
@@ -7,6 +7,10 @@ The deployed project provides a Cloud Function that accepts base64-encoded image
 See also: [MNIST Database](https://en.wikipedia.org/wiki/MNIST_database)
 
 ![Google Cloud Architecture](architecture.png)
+
+As seen on TV 📺 [Youtube: Hello, MNIST: Serverless machine learning training & prediction](https://www.youtube.com/watch?v=rxsogwvC7fw)
+
+[![Video thumbnail](https://img.youtube.com/vi/rxsogwvC7fw/mqdefault.jpg)](https://www.youtube.com/watch?v=rxsogwvC7fw)
 
 ## Tasks
 
